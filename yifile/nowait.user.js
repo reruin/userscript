@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         yifile_nowait
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/reruin
 // @version      0.1
 // @description  yifile免等待
 // @author       reruin@gmail.com
@@ -11,10 +11,17 @@
 (function() {
     'use strict';
 
-    window.onload = function(){
-    	$(".stxt,#g207,.newfdown").hide();
-    	$("#bootyz1,#bootyz2,#bootyz3").show();
+    function main(){
+    	var css = '.stxt,#g207,.newfdown{display:none !important;};#bootyz1,#bootyz2,#bootyz3{display:block !important;}';
+    	var style = document.createElement("style");
+    	style.innerHTML = css;
+    	document.getElementsByTagName('head')[0].appendChild(style);
     }
-
+    
+    document.onreadystatechange = function() {
+    	if(document.readyState=="complete"){
+    		main();
+    	}
+    }
 })();
 
