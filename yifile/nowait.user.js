@@ -12,16 +12,16 @@
     'use strict';
 
     function main(){
-    	var css = '.stxt,#g207,.newfdown{display:none !important;};#bootyz1,#bootyz2,#bootyz3{display:block !important;}';
+    	var css = '.stxt,#g207,.newfdown{display:none !important;}#bootyz1,#bootyz2,#bootyz3{display:block !important;}';
     	var style = document.createElement("style");
     	style.innerHTML = css;
     	document.getElementsByTagName('head')[0].appendChild(style);
     }
-    
+
     document.onreadystatechange = function() {
     	if(document.readyState=="complete"){
     		main();
     	}
-    }
-})();
+    };
 
+})();
