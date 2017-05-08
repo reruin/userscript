@@ -432,12 +432,12 @@ nw.c([
     "{:3_54:}":"coolmonkey/05","{:3_68:}":"coolmonkey/16","{:3_67:}":"coolmonkey/09","{:3_66:}":"coolmonkey/11","{:3_65:}":"coolmonkey/08","{:3_64:}":"coolmonkey/13","{:3_63:}":"coolmonkey/04","{:3_62:}":"coolmonkey/10","{:3_61:}":"coolmonkey/07","{:3_60:}":"coolmonkey/15","{:3_59:}":"coolmonkey/01","{:3_58:}":"coolmonkey/03","{:3_57:}":"coolmonkey/12","{:3_56:}":"coolmonkey/02","{:3_55:}":"coolmonkey/06","{:3_69:}":"coolmonkey/14"
   };
 
-  var js = ';(function(root){var path = '+JSON.stringify(path)+';var insert = seditor_insertunit;root.init_emot = function(){ root.seditor_insertunit = function(key , text){ if(path[text]){ text = "[img]http://www.hostloc.com/static/image/smiley/"+path[text]+".gif[/img]"};  insert(key , text);} }; root.init_emot(); }(this));';
+  var js = ';(function(root){var path = '+JSON.stringify(path)+';var insert = seditor_insertunit;root.init_emot = function(){ root.seditor_insertunit = function(key , text){ if(path[text]){ text = "[img]static/image/smiley/"+path[text]+".gif[/img]"};  insert(key , text);} }; root.init_emot(); }(this));';
 
   var js_post = ';(function(root){ var r = root.insertSmiley; root.insertSmiley = function(){ r.apply(root , Array.prototype.slice.call(arguments)); var evt = document.createEvent("HTMLEvents"); evt.initEvent("render_emot", false, false);document.dispatchEvent(evt); };}(this));'
   function render(el){
     el.value = nw.r(el.value , path , function(u){
-      return '[img]http://www.hostloc.com/static/image/smiley/'+u+'.gif[/img]';
+      return '[img]static/image/smiley/'+u+'.gif[/img]';
     });
   }
 
