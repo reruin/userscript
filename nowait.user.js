@@ -18,6 +18,9 @@
 (function(root){
   var nw = root.nw = {};
   var stack = [];
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype;
+  var hasOwnProperty   = ObjProto.hasOwnProperty;
+
   var page  = {
     addStyle : function(css){
         var el = document.createElement("style");
@@ -117,13 +120,25 @@
 
   }
 
+  function has(obj, key) {
+      return obj != null && hasOwnProperty.call(obj, key);
+  }
+
+  function key(obj){
+      var k = [];
+      for(var i in obj){
+          if(has(obj , i)) k.push(i);
+      }
+      return k;
+  }
+
   function isString(v){
     return typeof v === 'string';
   }
 
   function is(v , b) 
   { 
-    return Object.prototype.toString.call(v) === "[object "+b+"]"; 
+    return ObjProto.toString.call(v) === "[object "+b+"]"; 
   } 
 
   function isArray(v){ 
@@ -150,6 +165,15 @@
       stack.push(expr);
     }
   };
+
+  function replace(str,obj , format){
+      return str.replace(RegExp('(?:' + key(obj).join('|').replace(/([\:\'\)\(])/g,'\\$1') + ')','g') , function(match){
+          console.log(match)
+          return format ? format(obj[match]) : obj[match];
+      });
+  }
+
+  
 
   function toArray(a){
     return Array.prototype.slice.call(a);
@@ -290,6 +314,8 @@
   nw.m = monitor;
   nw.o = open;
 
+  nw.r = replace;
+
   nw.init = init;
   nw.noop = noop;
 
@@ -334,6 +360,24 @@ nw.c({
     var css = '#ad_left,.download-box+.row-fluid,.download-box>ul li:last-child,#ad_right,.downpage_rl,.downpage_rl+.row-fluid{display:none;}';
     nw.addStyle(css);
   }
+});
+
+nw.c(/hostloc\.com\/thread/ , function(){
+  var path = {
+    ":)":"default/smile",":lol":"default/lol",":hug:":"default/hug",":victory:":"default/victory",":time:":"default/time",":kiss:":"default/kiss",":handshake":"default/handshake",":call:":"default/call",":loveliness:":"default/loveliness",":Q":"default/mad",":L":"default/sweat",":(":"default/sad",":D":"default/biggrin",":'(":"default/cry",":@":"default/huffy",":o":"default/shocked",":P":"default/tongue",":$":"default/shy",";P":"default/titter",":funk:":"default/funk",
+
+    "yc002t":"yct/002","yc022t":"yct/022","yc013t":"yct/013","yc009t":"yct/009","yc014t":"yct/014","yc007t":"yct/007","yc020t":"yct/020","yc001t":"yct/001","yc019t":"yct/019","yc003t":"yct/003","yc010t":"yct/010","yc017t":"yct/017","yc012t":"yct/012","yc006t":"yct/006","yc011t":"yct/011","yc004t":"yct/004","yc005t":"yct/005","yc018t":"yct/018","yc021t":"yct/021","yc015t":"yct/015","yc008t":"yct/008","yc016t":"yct/016"
+  };
+
+  
+
+  var els = document.querySelectorAll('.t_fsz td');
+  els.forEach(function(el){
+    el.innerHTML = nw.r(el.innerHTML , path , function(u){
+      return '<img src="/static/image/smiley/'+ u + '.gif" />';
+    });
+  })
+
 });
 
 nw.init();
