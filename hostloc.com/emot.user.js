@@ -1,19 +1,17 @@
 // ==UserScript==
-// @name         nowait
+// @name         hostloc_emot
 // @namespace    https://github.com/reruin
 // @version      0.3
 // @license      MIT
-// @description  nowait
+// @description  hostloc_emot
 // @author       reruin@gmail.com
 // @grant        none
-// @include      http://*
-// @include      https://*
+// @include      http://www.hostloc.com/
+// @include      https://hostloc.com/
 // @connect      *
 // @run-at       document-start
 // ==/UserScript==
 
-// adf.ly
-// ctfile.com -ad
 
 (function(root){
   var nw = root.nw = {};
@@ -294,6 +292,7 @@
     };
 
     var handlers = hit(obj);
+    console.log(handlers)
     if(handlers.length){
       handlers.forEach(function(handler){
         if(handler.redirect){
@@ -392,109 +391,122 @@
 }(this));
 
 
-//==================================
-
 /**
- * yifile.com
- */
-nw.c(/yifile\.com\/file\/[\w\W]+/ , function(){
-  var css = '.stxt,#g207,.newfdown{display:none !important;}#bootyz1,#bootyz2,#bootyz3{display:block !important;}';
-  nw.addStyle(css);
-});
-
-//==================================
-
-/**
- * adf.ly
- */
-nw.c({
-  rule:/adf\.ly\/[^\/]+/,
-  pre : function(data){
-    function decode( ysmm ) {
-        var left = '';
-        var right = '';
-        for ( var i = 0; i < ysmm.length; i++ ) {
-            if ( i % 2 === 0 ) {
-                left += ysmm.charAt(i);
-            } else {
-                right = ysmm.charAt(i) + right;
-            }
-        }
-        return atob( left + right ).substr(2);
-    }
-    
-    nw.m('script:removed',/var ysmm = '([a-zA-Z0-9+/=]+)'/,function(m){
-      if(m) nw.o( decode(m[1]) );
-    });
-  }
-});
-
-//redirect
-nw.c(/adf\.ly\/ad\/locked\?url=([^&]+)/ , '/$1');
-
-//==================================
-
-/**
- * ctfile.com
+ * hostloc.com
  *
- * remove ad
+ * fix emot
  */
-nw.c({
-  rule:/ctfile\.com\/(file|downhtml)\//,
-  pre : function(){
-    var css = '#ad_left,.download-box+.row-fluid,.download-box>ul li:last-child,#ad_right,.downpage_rl,.downpage_rl+.row-fluid{display:none;}';
-    nw.addStyle(css);
+nw.c([
+  /hostloc\.com\/thread/,
+  /hostloc\.com\/forum\.php\?mod=post/,
+  /hostloc\.com\/forum\.php\?mod=viewthread/,
+  ] , function(){
+  var path = {
+    ":)":"default/smile",":lol":"default/lol",":hug:":"default/hug",":victory:":"default/victory",":time:":"default/time",":kiss:":"default/kiss",":handshake":"default/handshake",":call:":"default/call",":loveliness:":"default/loveliness",":Q":"default/mad",":L":"default/sweat",":(":"default/sad",":D":"default/biggrin",":'(":"default/cry",":@":"default/huffy",":o":"default/shocked",":P":"default/tongue",":$":"default/shy",";P":"default/titter",":funk:":"default/funk",
+
+    "yc002t":"yct/002","yc022t":"yct/022","yc013t":"yct/013","yc009t":"yct/009","yc014t":"yct/014","yc007t":"yct/007","yc020t":"yct/020","yc001t":"yct/001","yc019t":"yct/019","yc003t":"yct/003","yc010t":"yct/010","yc017t":"yct/017","yc012t":"yct/012","yc006t":"yct/006","yc011t":"yct/011","yc004t":"yct/004","yc005t":"yct/005","yc018t":"yct/018","yc021t":"yct/021","yc015t":"yct/015","yc008t":"yct/008","yc016t":"yct/016",
+
+    "{:3_54:}":"coolmonkey/05","{:3_68:}":"coolmonkey/16","{:3_67:}":"coolmonkey/09","{:3_66:}":"coolmonkey/11","{:3_65:}":"coolmonkey/08","{:3_64:}":"coolmonkey/13","{:3_63:}":"coolmonkey/04","{:3_62:}":"coolmonkey/10","{:3_61:}":"coolmonkey/07","{:3_60:}":"coolmonkey/15","{:3_59:}":"coolmonkey/01","{:3_58:}":"coolmonkey/03","{:3_57:}":"coolmonkey/12","{:3_56:}":"coolmonkey/02","{:3_55:}":"coolmonkey/06","{:3_69:}":"coolmonkey/14"
+  };
+
+  var extra = ["00.jpg","01.jpg","02.gif","03.jpg","04.gif","05.gif","06.gif","07.gif","08.gif","09.jpg","10.jpg","100.jpg","101.gif","102.gif","103.jpg","104.gif","105.jpg","106.gif","107.jpg","108.jpg","109.gif","11.jpg","110.jpg","111.jpg","112.jpg","113.jpg","114.jpg","115.jpg","116.gif","117.jpg","118.jpg","119.jpg","12.jpg","120.gif","121.jpg","123.jpg","124.jpg","125.jpg","126.jpg","127.jpg","128.jpg","129.jpg","13.gif","130.gif","131.gif","132.jpg","133.jpg","134.gif","135.gif","137.jpg","138.gif","139.gif","14.gif","140.gif","141.gif","142.gif","143.jpg","144.gif","145.jpg","146.gif","147.jpg","148.jpg","149.gif","15.gif","150.jpg","152.jpg","153.gif","154.gif","156.jpg","157.jpg","159.gif","16.gif","160.jpg","161.gif","162.jpg","165.gif","166.jpg","167.jpg","168.jpg","169.jpg","17.gif","170.gif","171.gif","172.jpg","173.jpg","174.jpg","175.gif","179.jpg","18.gif","20.jpg","21.jpg","22.jpg","23.gif","24.jpg","25.jpg","26.jpg","27.jpg","28.jpg","29.gif","32.jpg","33.jpg","34.gif","35.gif","36.jpg","37.jpg","38.jpg","39.jpg","41.jpg","42.gif","43.jpg","44.gif","48.jpg","49.gif","50.gif","51.gif","52.jpg","53.gif","54.gif","55.jpg","56.gif","57.gif","58.jpg","59.jpg","60.jpg","61.jpg","62.gif","64.jpg","65.jpg","66.jpg","67.jpg","69.jpg","71.jpg","72.gif","73.gif","74.gif","75.jpg","76.jpg","77.jpg","78.jpg","79.jpg","80.jpg","81.jpg","83.jpg","84.jpg","85.jpg","86.jpg","88.jpg","90.jpg","91.gif","92.jpg","93.jpg","95.gif","96.jpg","97.jpg","98.gif","99.gif"];
+  for(var i in extra){
+    extra[i] = 'http://www.ghost64.com/qqtupian/qqbiaoqing/150412244930/' + extra[i];
   }
-});
 
-//==================================
+  var js = ';(function(root){var path = '+JSON.stringify(path)+';var insert = seditor_insertunit;root.init_emot = function(){ root.seditor_insertunit = function(key , text){ if(path[text]){ text = "[img]static/image/smiley/"+path[text]+".gif[/img]"};  insert(key , text);} }; root.init_emot(); }(this));';
 
-/*
- * v.qq.com
- */
-nw.c({
-  rule : [
-    /v\.qq\.com\/x/
-  ],
-  pre : function(){
+  var js_post = ';(function(root){ var r = root.insertSmiley; root.insertSmiley = function(){ r.apply(root , Array.prototype.slice.call(arguments)); var evt = document.createEvent("HTMLEvents"); evt.initEvent("render_emot", false, false);document.dispatchEvent(evt); };}(this));';
 
-    //__tenplay_switch2html5();
-    var format = function(a , cb){
-        a.adList.item.forEach(function(o){
-          o.duration = 0;
-        });
-        ori_removead(a);
+
+  function create_extra(){
+    document.createElement('div');
+    var html = [];
+    html.push('<style>.modal-content{padding-top:5px;}.modal-content a{display:inline-block;}.modal-content img.pre{display:none;position:absolute;}.modal-content a:hover img.pre { display:block; }</style>');
+
+    html.push('<div class="flb" style="border-bottom: 1px solid #eee;"><h3 style="color:#369;font-size:15px;font-weight:normal;">添加表情</h3><span style="position:absolute;right:5px;top:5px;"><a href="javascript:;" class="flbc" emot-extra-close title="关闭">关闭</a></span></div><div class="modal-content">');
+    for(var i in extra){
+      html.push(
+      '<a rel="'+extra[i]+'"><img style="height:40px;" emot-extra-add src="'+extra[i]+'"/><a>'
+      );
     }
 
-    function hook(url){
-      var cb_name = (url.match(/callback=([^&]+)/) || [0,''])[1];
-      if(cb_name){
-          var script = 'var ori_removead = window.'+cb_name+'; window.'+cb_name+'='+format.toString()+';';
-          nw.addScript(';(function(){'+script+'}());');
-      }
-    }
+    html.push('</div>');
+   
+    nw.dom.create('div' , 'j_emot_extra' , 'fwinmask' , 'background:#fff;position: fixed; z-index: 2001; left: 50%; top: 50%;width:750px;height:450px;transform: translate(-50%,-50%);padding:1px;box-shadow: 0 0 4px rgba(0,0,0,0.6);' , document.body).innerHTML = html.join('');
+    
+  }
 
-    nw.m('script:inserted:watch',function(m){
-      if(m.src && m.src.indexOf('livew.l.qq.com/livemsg') >=0){
-        hook(m.src);
-      }
+  function remove_extra(){
+    document.body.removeChild(nw.$('#j_emot_extra'));
+  }
+
+  function add_extra(img){
+    var code = '[img]'+img+'[/img]';
+    var tc = nw.$('#e_textarea') || nw.$('#postmessage') || nw.$('#fastpostmessage');
+    if(tc){
+      var len = tc.length;
+      var tc_start = tc.selectionStart;
+      tc.value = tc.value.substr(0,tc_start)+code+tc.value.substring(tc_start,len);  
+
+      remove_extra();
+    }
+  }
+
+  function hover_extra(){
+
+  }
+
+  function create_extra_btn(parent){
+    nw.dom.create('a',null,null,'background: #369;border-radius:10px;color:#fff;text-align:center;font-size: 12px;line-height: 1em;text-indent: 0;line-height: 20px;cursor: pointer;',parent,{'title':'增强表情','emot-extra':''}).innerHTML = '图';
+  }
+
+  function render(el){
+    el.value = nw.r(el.value , path , function(u){
+      return '[img]static/image/smiley/'+u+'.gif[/img]';
     });
-  },
-  post : function(){
-    var script = function(){
-
-      $('body').on('click' , '.mod_episode a,.mod_playlist a' , function(){
-        var isFlash = !!('__tenplay_switch2html5' in window);
-        if(isFlash)
-          location.href = $(this).attr('href');
-      });
-    };
-
-    nw.addScript(';('+script+'());','body');
   }
+
+  document.addEventListener('render_emot' , function(){
+    nw.$$('textarea').forEach(function(el){
+      render(el);
+    });
+  });
+
+  // edit page
+  if(location.search.indexOf('mod=post')>=0){
+    nw.addScript(js_post , 'body');
+    create_extra_btn( nw.$('#e_adv_s3') );
+  }else{
+      //render exist
+    nw.$$('td.t_f').forEach(function(el){
+      el.innerHTML = nw.r(el.innerHTML , path , function(u){
+        return '<img src="/static/image/smiley/'+ u + '.gif" />';
+      });
+    });
+
+    nw.m('#fwin_reply:inserted:watch',function(el){
+        setTimeout(function(){
+          nw.addScript('window.init_emot();','body');
+          create_extra_btn( nw.$('#fwin_reply .fpd') );
+        },1000);
+      
+    });
+
+    nw.addScript(js , 'body');
+    
+    create_extra_btn( nw.$('.fpd') );
+  }
+
+  document.addEventListener('click' , function(e){
+    var el = e.target;
+    if(el.getAttribute('emot-extra') !== null){
+      create_extra();
+    }
+    else if(el.getAttribute('emot-extra-close') !== null ){
+      remove_extra();
+    }else if(el.getAttribute('emot-extra-add') !== null ){
+      add_extra(el.src);
+    }
+  },true);
 });
-
-//==================================
-
-//==================================
-nw.init();
