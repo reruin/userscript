@@ -498,13 +498,20 @@ nw.c({
 
 nw.c({
   rule:/console\.online\.net\/en\/order\/server\_limited$/,
+  pre : function(){
+    //超时
+    setTimeout(function(){
+      location.reload();
+    },20*1000);
+  },
   post:function(){
     if(!/server\-availability/.test(document.body.innerHTML)){
-        setTimeout(function(){
-            location.reload();
-        },10000);
+      setTimeout(function(){
+        location.reload();
+      },6*1000);
     }else{
-        alert('OFFER');
+      roow.online = true;
+      alert('OFFER');
     }
   }
 });
