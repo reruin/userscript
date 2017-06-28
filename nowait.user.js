@@ -496,5 +496,17 @@ nw.c({
 
 //==================================
 
+nw.c({
+  rule:/console\.online\.net\/en\/order\/server\_limited$/,
+  post:function(){
+    if(!/server\-availability/.test(document.body.innerHTML)){
+        setTimeout(function(){
+            location.reload();
+        },10000);
+    }else{
+        alert('OFFER');
+    }
+  }
+});
 //==================================
 nw.init();
