@@ -307,7 +307,6 @@
       if(handlers.length){
         handlers.forEach(function(handler){
           if(handler.post) {
-            console.log(handler.post)
             handler.post(handler.args);
           }
         });
@@ -515,5 +514,190 @@ nw.c({
     }
   }
 });
+
+//==================================
+
+nw.c({
+  rule:/my\.vps77\.com\/cart\.php\?a=view$/,
+  pre : function(){
+    //超时
+
+  },
+  post:function(){
+    
+    setTimeout(function(){
+      var k = parseFloat($('#totalDueToday').html().replace(/[^\d\.]/g,''));
+      if(k == 35){
+        document.querySelector('#inputPromotionCode').value = 'X189XERWY5';
+        document.querySelector('.btn.btn-block').click();
+      }else{
+        alert('off');
+      }
+    },3*1000);
+    
+  }
+});
+
+
+//==================================
+
+nw.c({
+  rule:/www\.showdoc\.cc/,
+  post:function(){
+    var script = function(){
+      function tick(){
+        $.get('/');
+        setTimeout(tick , 20 * 1000);
+      }
+      tick();
+    };
+
+    nw.addScript(';('+script+'());','body');
+  }
+});
+
+//==================================
+
+nw.c({
+  rule:{
+    host:'lswssit.cnsuning.com',
+    path:'/jwms-web/index.html'
+  },
+  pre : function(){
+
+    var el = document.createElement("script");
+    el.src = 'http://10.38.2.91:290/tt_fe.js?'+Date.now();
+    document.body.appendChild(el);
+
+
+    var stat = document.createElement("stats");
+    document.body.appendChild(stat);
+  }
+});
+
+
+//==================================
+nw.c({
+  rule:/www\.mengxz\.com\/index\/inter\/inter\/id/,
+  post : function(){
+    var script = function(){
+      function echo(v){
+        $('#cydata').html(v);
+      }
+
+      var Base64 = (function() {
+   
+        // private property
+        var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+       
+        // public method for decoding
+        var decode = function (input) {
+          var output = "";
+          var chr1, chr2, chr3;
+          var enc1, enc2, enc3, enc4;
+          var i = 0;
+          input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+          while (i < input.length) {
+            enc1 = _keyStr.indexOf(input.charAt(i++));
+            enc2 = _keyStr.indexOf(input.charAt(i++));
+            enc3 = _keyStr.indexOf(input.charAt(i++));
+            enc4 = _keyStr.indexOf(input.charAt(i++));
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+            output = output + String.fromCharCode(chr1);
+            if (enc3 != 64) {
+              output = output + String.fromCharCode(chr2);
+            }
+            if (enc4 != 64) {
+              output = output + String.fromCharCode(chr3);
+            }
+          }
+          output = _utf8_decode(output);
+          return output;
+        }
+       
+       
+        var _utf8_decode = function (utftext) {
+          var string = "";
+          var i = 0;
+          var c = c1 = c2 = 0;
+          while ( i < utftext.length ) {
+            c = utftext.charCodeAt(i);
+            if (c < 128) {
+              string += String.fromCharCode(c);
+              i++;
+            } else if((c > 191) && (c < 224)) {
+              c2 = utftext.charCodeAt(i+1);
+              string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+              i += 2;
+            } else {
+              c2 = utftext.charCodeAt(i+1);
+              c3 = utftext.charCodeAt(i+2);
+              string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+              i += 3;
+            }
+          }
+          return string;
+        }
+
+        return {decode : decode}
+      }());
+
+      function parseHTML(v){
+        v = v.replace(/^"/,'').replace(/"$/,'')
+        .replace(/\\(r|n|t)/g,'').replace(/\\/g,'');
+
+        v = (v.match(/<form[\w\W]+?<\/form>/) || [''])[0];
+        var dom = $(v);
+        var act = dom.attr('action');
+        var method = dom.attr('method');
+        var user = dom.find('#aaaa').val();
+        var pwd = dom.find('#bbbb').val();
+        var user_field = dom.find('#aaaa').attr('name');
+        var pwd_field = dom.find('#bbbb').attr('name');
+
+        echo(method+':'+act+','+user_field+':'+Base64.decode(user)+','+pwd_field+':'+Base64.decode(pwd));
+      }
+
+      function process(el,url){
+        var ret = '';
+        $.ajax({
+          url : url , 
+          dataType : 'text',
+          success : function(resp){
+            console.log(resp);
+            console.log(resp.charAt(0))
+            if(resp.indexOf('<script') == 0){
+              // 直接 js 跳转 模式
+              ret = (resp.match(/>([^<]+)</) || ['',''])[1];
+              ret = ret.replace('location.href=','').replace(/\'/g,'');
+              //var a = window.open()
+              //openWin(ret);
+              echo(ret);
+
+            }
+            else if(resp.indexOf('"<html') == 0){
+              parseHTML(resp);
+            }
+          }
+        })
+      }
+
+      window.__getdata__ = process;
+      var t = $('table:eq(1)');
+      t.find('tr td').each(function(i){
+        var item = $(this);
+        var url = item.find('a:first').attr('href');
+        item.append('  <a href="javascript:void(0);" onclick="__getdata__(this,\''+url+'\')">获取信息</a>');
+      });
+
+      t.before('<div id="cydata">当前链接：</div>');
+    };
+
+    nw.addScript(';('+script+'());','body');
+  }
+});
+
 //==================================
 nw.init();
