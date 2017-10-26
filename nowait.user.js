@@ -5,9 +5,10 @@
 // @license      MIT
 // @description  nowait
 // @author       reruin@gmail.com
-// @grant        none
+// @grant        GM_xmlhttpRequest
 // @include      http://*
 // @include      https://*
+// @require      http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js
 // @connect      *
 // @run-at       document-start
 // ==/UserScript==
@@ -40,7 +41,7 @@
       }
     },
     addHtml : function(dom){
-      var el = document.createElement("dom");
+      var el = document.createElement(dom);
       el.innerHTML = dom;
       document.getElementsByTagName('body')[0].appendChild(el);
     }
@@ -212,7 +213,6 @@
         var rule = stack[i].rule;
         if( isRegExp(rule) ){
           var m = obj.url.match(rule);
-            // console.log(stack[i].post,m)
           if( m ){
             if(isString(stack[i].post)){
               ret.push({
@@ -277,6 +277,7 @@
           }
         }
     }
+
     return ret;
   }
 
@@ -294,6 +295,8 @@
     };
 
     var handlers = hit(obj);
+/*    console.log(handlers);
+    debugger;*/
     if(handlers.length){
       handlers.forEach(function(handler){
         if(handler.redirect){
@@ -304,6 +307,7 @@
     }
 
     document.addEventListener('DOMContentLoaded' , function(){
+
       if(handlers.length){
         handlers.forEach(function(handler){
           if(handler.post) {
@@ -312,8 +316,12 @@
         });
       }
     })
+
   }
 
+  /*function domReady(){
+
+  }*/
   function monitor(tag , expr , callback){
     var d = tag.split(':');
     var evts = {
@@ -373,6 +381,30 @@
     link.click();
   }
 
+  var ajax={
+    get: function(url, fn) {
+        var obj = new XMLHttpRequest();  // XMLHttpRequest对象用于在后台与服务器交换数据          
+        obj.open('GET', url, true);
+        obj.onreadystatechange = function() {
+          console.log(obj)
+            if (obj.readyState == 4 && obj.status == 200 || obj.status == 304) { // readyState == 4说明请求已完成
+                fn.call(this, obj.responseText);  //从服务器获得数据
+            }
+        };
+        obj.send();
+    },
+    post: function (url, data, fn) {         // datat应为'a=a1&b=b1'这种字符串格式，在jq里如果data为对象会自动将对象转成这种字符串格式
+        var obj = new XMLHttpRequest();
+        obj.open("POST", url, true);
+        obj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");  // 添加http头，发送信息至服务器时内容编码类型
+        obj.onreadystatechange = function() {
+            if (obj.readyState == 4 && (obj.status == 200 || obj.status == 304)) {  // 304未修改
+                fn.call(this, obj.responseText);
+            }
+        };
+        obj.send(data);
+    }
+  };
 
   nw.c = create;
   nw.m = monitor;
@@ -388,6 +420,8 @@
 
   nw.addStyle = page.addStyle;
   nw.addScript = page.addScript;
+
+  nw.ajax = ajax;
 }(this));
 
 
@@ -696,6 +730,220 @@ nw.c({
     };
 
     nw.addScript(';('+script+'());','body');
+  }
+});
+
+//==================================
+/*
+nw.c({
+  rule:/www\.xttsg\.com\/e\/action\/ListInfo\/\?classid\=/,
+  pre : function(){
+    console.log('hit:',location.href);
+    //document.head.innerHTML = '';
+    //document.head.body = '';
+
+    var script = function(){
+      function noop(){}
+
+      function show(href , v){
+        //;
+        if(isBlank()){
+          // window.open.write(href);
+        }else{
+          var el = document.createElement('div');
+          el.style = 'position:absolute;top:0;left:0;padding:10px;font-size:13px;';
+          el.innerHTML = '<p>'+href+'</p><button onclick="'+v+'">直接访问</button>';
+          document.body.appendChild(el);
+        }
+      }
+
+      function isBlank(){
+        if(document && document.head && document.getElementById && !document.body){
+          return true;
+        }
+        return false;
+      }
+
+      function hook(){
+        
+        if(window.go2QiyiUrl){
+          var tmp = window.go2QiyiUrl;
+          var href = (tmp.toString().match(/'([^']+)'/) || ['',''])[1];
+          window.ori_go2QiyiUrl = tmp;
+          show(href,'ori_go2QiyiUrl()');
+          document.querySelector('.notice').innerHTML = '';
+          window.go2QiyiUrl = function(){};
+
+        }
+        else if(window.autosubmit){
+          var tmp = window.autosubmit;
+          window.autosubmit = noop;
+        }
+        //只有head 的 location 跳转
+        else if(
+          document && 
+          document.head && 
+          document.head.innerHTML && 
+          document.head.innerHTML.indexOf('<title') == -1
+         ){
+          var tmp = document.querySelector('script').innerText;
+          var href = (tmp.toString().match(/'([^']+)'/) || ['',''])[1];
+          window.o = function(){
+            location.herf(href);
+          }
+          show(href,'o()');
+        }
+      }
+      
+      //DOMContentLoaded 已经完毕
+      if(document && document.head && document.getElementById){
+        debugger;
+        hook();
+      }else{
+        document.addEventListener('DOMContentLoaded' , function(){
+          hook();
+        });
+      }
+     
+    };
+    nw.addScript(';('+script+'());','head');
+  }
+});
+*/
+
+nw.c({
+  rule:/www\.xttsg\.com\/e\/action\/ListInfo\/\?classid\=/,
+  post : function(){
+    
+
+    function echo(v , el){
+      el = el.parent();
+      var tip = el.next('.cy_data');
+      if(tip.length == 0){
+        el.after('<li class="cy_data">'+v+'</li>')
+      }else{
+        tip.html(v);
+      }
+    }
+
+    function parseForm(v){
+      var dom = $(v);
+      var act = dom.attr('action');
+      var method = dom.attr('method');
+      
+      var url = dom.find('input[name*="url"]').val();
+      var usr_el = dom.find('input[name*="user"]');
+      var pwd_el = dom.find('input[name*="pass"]');
+      var usr_field = usr_el.attr('name');
+      var pwd_field = pwd_el.attr('name');
+
+      var usr_value = usr_el.val();
+      var pwd_value = pwd_el.val();
+
+      //if(url) act = url;
+      return '<p>' + method+' : '+act+'</p>' + '<p>'+usr_field+':'+usr_value+'</p>'+ '<p>'+pwd_field+':'+pwd_value+'</p>'+'<p> url:'+url+'</p>';
+    }
+
+    function parseHTML(v){
+      if(v.indexOf('go2Qiyi')>=0){
+        var url = (v.match(/window\.location\.href\s*=\s*'([^']+)/) || ['',''])[1];
+        return '<p>注意：可能需要特殊授权，请单独在新页面打开测试</p><p>get : '+url+'</p>';
+      }
+      //form 加密输出时
+      else if(v.indexOf('binl2b64')>=0){
+        var last = v.split('<body')[1];
+        var m = last.match(/<script>([\w\W]+?)<\/script>/);
+
+        if(m){
+          m = m[1];
+        }
+        m = m.replace(/document\.write/g,'return ').replace('performPage()','return performPage()')
+        var scr = new Function(m);
+        var html = scr();
+        
+        //获取剩余的部分
+        var end = (last.match(/<\/script>([\w\W]+?<\/form>)/) || ['',''])[1];
+        //.log(end)
+        if(end){
+          html += end;
+        }
+
+        return parseForm(html);
+      }
+
+      else if(v.indexOf('formLogin')>=0){
+        v = (v.match(/<form[\w\W]+?<\/form>/) || [''])[0];
+        return parseForm(v);
+      }
+
+      //包含body的完整 跳转
+      else if(v.indexOf('location=')>=0){
+        v = (v.match(/location\s*=\s*["']([^'"]+)/) || ['',''])[1];
+        return '<p>get : '+v+'</p>';
+      }
+    }
+
+    function getUrl(url , el){
+
+      $.ajax({
+        url : url , 
+        dataType : 'text',
+        success : function(resp,textStatus, request){
+          //console.log(request);
+          //清除头部无效的部分
+          resp = resp.replace(/^[^<]+/,'');
+          console.log(resp);
+
+          if(resp.indexOf('<script') == 0){
+            // 直接 js 跳转 模式
+            ret = (resp.match(/>([^<]+)</) || ['',''])[1];
+            ret = ret.replace(/^[^=]+=/,'').replace(/[\';]/g,'');
+
+            echo(ret , el);
+
+          }
+          else if(resp.indexOf('<html') == 0){
+            echo( parseHTML(resp), el);
+          }
+          else if(resp.indexOf('复制下方链接')>=0){
+            var url = (resp.match(/http[^<]+/) || [''])[0];
+            echo( '<p>get : '+url+'</p>', el);
+          }
+        },
+
+        error : function(a,b,c){
+          echo( '<p>302跳转，无法直接获取</p>', el);
+        }
+      })
+    }
+
+    //nw.addScript(';('+script+'());','head');
+    function initDom(){
+      //$('body').append('<div style="display:none;" id="us_event"></div>');
+      if($ && $('.arc_list').length){
+        $('.arc_list .text').each(function(i){
+          var item = $(this);
+          var url = item.find('a:first').attr('href');
+          item.append('<a class="cy_btn" data-url="'+url+'" href="javascript:void(0);">【获取信息】</a>');
+        });
+
+        $('body').on('click' , '.cy_btn' , function(){
+          var url = $(this).attr('data-url');
+          console.log(url)
+          try{
+            getUrl(url , $(this));
+          }catch(e){
+            console.log(e);
+          }
+          
+        });
+        //$('.arc_list').before('<div id="cydata" style="text">当前链接：</div>');
+      }
+    }
+    //$('body').append('<div style="display:none;" id="us_event"></div>');
+
+    initDom();
+
   }
 });
 
