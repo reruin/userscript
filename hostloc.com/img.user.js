@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         hostloc_image
 // @namespace    https://github.com/reruin
-// @version      0.2
+// @version      0.3
 // @license      MIT
 // @description  hostloc_image
 // @author       reruin@gmail.com
@@ -333,7 +333,7 @@ nw.c([
       'src' : 'https://imgchr.com/sdk/pup.js',
       'id' : 'chevereto-pup-src',
       'data-url':'https://imgchr.com/upload',
-      'data-auto-insert':'bbcode-embed-medium'
+      'data-auto-insert':'bbcode-embed'
     });
 
     nw.addStyle('a.chevereto-pup-button--discuz,body .b1r a.chevereto-pup-button--discuz{background: none !important;color: #8e44ad !important;border:none !important;}');
