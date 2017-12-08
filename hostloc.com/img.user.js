@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         hostloc_image
 // @namespace    https://github.com/reruin
-// @version      0.1
+// @version      0.2
 // @license      MIT
 // @description  hostloc_image
 // @author       reruin@gmail.com
@@ -336,7 +336,7 @@ nw.c([
       'data-auto-insert':'bbcode-embed-medium'
     });
 
-    nw.addStyle('a.chevereto-pup-button--discuz, .b1r a.chevereto-pup-button--discuz{background: #fff !important;color: #8e44ad !important;}');
+    nw.addStyle('a.chevereto-pup-button--discuz, .b1r a.chevereto-pup-button--discuz{background: none !important;color: #8e44ad !important;}');
 });
 
 //==================================
