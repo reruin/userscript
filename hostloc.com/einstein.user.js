@@ -449,7 +449,7 @@ nw.c({
       $("#accepttos").attr("checked", true);
       $('#btnCompleteOrder').click();
       setTimeout(function(){
-        alert('快下单');
+       // alert('快下单');
       },5000);
     },100);
   }
