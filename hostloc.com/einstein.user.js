@@ -334,6 +334,7 @@ nw.c({
       if(host.length){
         host.val('hk'+Date.now());
         $('#inputRootpw').val('changeme');
+        $("#inputConfigOption1 option:not(:last)").remove();
         $("#inputConfigOption1 option:last").attr("selected",true);
 
         $('#btnCompleteProductConfig').click();
@@ -371,7 +372,7 @@ nw.c({
         function init(){
           var html = '';
           for(var i in services){
-            html += '<li><button id="__c_%id" onclick="window.dig(%id)" class="btn btn-success" id="checkout">%title</button></li>'.replace(/%id/g,i).replace(/%title/g,services[i].title)
+            html += '<li><button id="__c_%id" onclick="window.dig(%id)" class="btn btn-success" id="checkout">%title</button></li>'.replace(/%id/g,i).replace(/%title/g,services[i].title);
           }
 
           $('.top-nav').prepend(html);
@@ -379,7 +380,7 @@ nw.c({
           if(location.search.indexOf('auto')>=0){
             var pid = storage['PID'];
             if(pid){
-              check(parseInt(pid))
+              check(parseInt(pid));
             }
           }
         }
@@ -400,7 +401,7 @@ nw.c({
 
         function check(id){
           current = $('#__c_'+id);
-          storage['PID'] = id
+          storage['PID'] = id;
           current.prop('disabled',true).html('运行中('+ retry++ +')');
           link = services[parseInt(id)].url;
           process();
@@ -432,8 +433,8 @@ nw.c({
   post: function() {
     setTimeout(function(){
       // $('#checkout').click();
+      $("input[name='paymentmethod'][value='stripe']").remove();
       $("input[name='paymentmethod'][value='paypal']").attr("checked",'checked');
-      $('.radio-inline').eq(1).click();
       $("#accepttos").attr("checked", true);
       $('#btnCompleteOrder').click();
 
