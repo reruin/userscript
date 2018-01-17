@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         einstein
 // @namespace    https://github.com/reruin
-// @version      0.1
+// @version      0.2
 // @license      MIT
 // @description  einstein
 // @author       reruin@gmail.com
@@ -318,32 +318,15 @@
 
 
 /**
- * einstein
+ * enoctus
  *
  */
 
 //https://einstein.enoctus.co.uk/cart.php?a=add&pid=92&billingcycle=annually&promocode=JOIN15
-nw.c({
-  rule: /einstein\.enoctus\.co\.uk\/cart\.php\?a=add&pid=/,
-  pre: function() {
-    //超时
-  },
-  post: function() {
-    var t = $('#order-boxes').html()
-    if(t && t.indexOf('Out of Stock') >=0){
-      setTimeout(function(){
-        location.reload()
-      },5*1000)
-    }
-  }
-});
 
 nw.c({
   rule: /einstein\.enoctus\.co\.uk\/cart\.php\?a=confproduct/,
-  pre: function() {
-    //超时
-
-  },
+  pre: function() {},
   post: function() {
 
     setTimeout(function() {
@@ -368,9 +351,7 @@ nw.c({
 
 nw.c({
   rule: /einstein\.enoctus\.co\.uk\/cart\.php\?a=view/,
-  pre: function() {
-    //超时
-  },
+  pre: function() {},
   post: function() {
 
     var script = function(){
@@ -384,7 +365,9 @@ nw.c({
           {title:'1G 年', url:'/cart.php?a=add&pid=93&billingcycle=annually'}
         ];
 
-        var current
+        var current;
+        var storage = window.localStorage;
+
         function init(){
           var html = '';
           for(var i in services){
@@ -392,6 +375,13 @@ nw.c({
           }
 
           $('.top-nav').prepend(html);
+
+          if(location.search.indexOf('auto')>=0){
+            var pid = storage['PID'];
+            if(pid){
+              check(parseInt(pid))
+            }
+          }
         }
 
         function process(){
@@ -410,6 +400,7 @@ nw.c({
 
         function check(id){
           current = $('#__c_'+id);
+          storage['PID'] = id
           current.prop('disabled',true).html('运行中('+ retry++ +')');
           link = services[parseInt(id)].url;
           process();
@@ -422,7 +413,6 @@ nw.c({
       
       window.dig = dig;
     }
-
     if($('.view-cart-empty').length){
       nw.addScript(';(' + script + '());', 'body');
     }else{
@@ -438,9 +428,7 @@ nw.c({
 
 nw.c({
   rule: /einstein\.enoctus\.co\.uk\/cart\.php\?a=checkout/,
-  pre: function() {
-    //超时
-  },
+  pre: function() {},
   post: function() {
     setTimeout(function(){
       // $('#checkout').click();
@@ -448,9 +436,11 @@ nw.c({
       $('.radio-inline').eq(1).click();
       $("#accepttos").attr("checked", true);
       $('#btnCompleteOrder').click();
+
+      // automatically removed from the cart
       setTimeout(function(){
-       // alert('快下单');
-      },5000);
+        location.href = 'cart.php?a=view&auto=1';
+      },20*1000);
     },100);
   }
 });
