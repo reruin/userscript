@@ -1024,6 +1024,36 @@ nw.c({
   }
 });
 
+//==================================
+nw.c({
+  rule: /youtube\.com\/watch\?v=[a-zA-Z0-9]+/,
+  post: function() {
+    var script = function() {
+      let scr = document.createElement('script')
+      // scr.src = 'https://face.reruin.net:2096/lib/u2b.js'
+      scr.src = 'http://localhost:3008/lib/video_live.js'
+      document.body.appendChild(scr)
+    };
+
+    nw.addScript(';(' + script + '());', 'body');
+  }
+});
+
+//==================================
+nw.c({
+  rule: /v\.youku\.com\/v_show/,
+  post: function() {
+    var script = function() {
+      let scr = document.createElement('script')
+      // scr.src = 'https://face.reruin.net:2096/lib/u2b.js'
+      scr.src = 'http://localhost:3008/lib/video_live.js'
+      document.body.appendChild(scr)
+    };
+
+    nw.addScript(';(' + script + '());', 'body');
+  }
+});
+
 
 //==================================
 nw.init();
