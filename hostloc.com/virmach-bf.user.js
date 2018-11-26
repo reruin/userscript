@@ -287,7 +287,7 @@ nw.c({
                 rule['location'].push(i)
               }
               // area
-              else if( ['LA','SJ','DAL','PH','SE'].includes(i) ){
+              else if( ['LA','SJ','DAL','PHX','SEA'].includes(i) ){
                 if(!rule['area']) rule['area'] = []
                 rule['area'].push(i)
               }
