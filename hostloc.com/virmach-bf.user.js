@@ -378,7 +378,7 @@ nw.c({
           current = $(`<a class="btn large greensea flat">开始</a>`)
           let el_btn_setting = $(`<a class="btn large greensea flat" id="j_setting">设置</a>`)
           let el = $('<div id="j_box" class="setting-box"><div class="hd">设置</div><div class="item"><span>价格策略</span><textarea type="text" id="j_rule" value="" placeholder="邮箱">'+
-              `# 参数：虚拟化/cpu数量/内存/硬盘/地域/价格\r# 例如：kvm，价格20以内，核心2~4，内存>=3000M，硬盘至少20G，流量至少1T,仅限CA\r# KVM/0-20/2-4C/3000M/20G/1T/CA\r0-2\r0-6/100G/1T\r0-8/KVM/1000M/15G/SJ\r0-10/KVM/3C/4000M/20G/0.5T\r0-20/KVM/4C/6000M/20G/1T/CA\r0-30/KVM/6C/8000M/25G/1T/CA\r0-40/KVM/8C/16000M/25G/5T/CA\r0-6/KVM/200M/KVM/SJ`
+              `# 参数：虚拟化/cpu数量/内存/硬盘/地域/价格\r# 例如：kvm，价格20以内，核心2~4，内存>=3000M，硬盘至少20G，流量至少1T,仅限CA\r# KVM/0-20/2-4C/3000M/20G/1T/CA\r0-2\r0-6/100G/1T\r0-8/KVM/1000M/15G/SJ\r0-10/KVM/3C/4000M/20G/0.5T\r0-20/KVM/4C/6000M/20G/1T/CA\r0-30/KVM/6C/8000M/25G/1T/CA\r0-40/KVM/8C/16000M/25G/5T/CA\r0-6/KVM/200M/SJ`
             +'</textarea></div><div class="item center"><button id="j_setting_save" class="btn large greensea flat">确定</button></div></div>')
 
           $('.entry-content').prepend(el_btn_setting);
@@ -433,7 +433,7 @@ nw.c({
 
             $('.pricing-inner').html( dom.find('.pricing-inner').html() )
 
-            let mprice = cpu * 2.5 + (ram >> 7) * 0.5 + (disk / 10) * 2 + bandwidth * 1
+            let mprice = cpu * 2.5 + Math.round(ram * 10 / 128) * 0.5 / 10 + (disk / 10) * 2 + bandwidth * 1
 
             if(location == 'CA') mprice *= 1
             else if(location == 'AZ' || location == 'WA') mprice *= 0.9
