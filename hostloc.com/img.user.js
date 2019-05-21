@@ -6,7 +6,7 @@
 // @description  hostloc_image
 // @author       reruin@gmail.com
 // @grant        none
-// @include      http://www.hostloc.com/*
+// @include      https://www.hostloc.com/*
 // @include      https://hostloc.com/*
 // @connect      *
 // @run-at       document-start
