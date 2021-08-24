@@ -325,9 +325,7 @@
 
 
 nw.c([
-  /hostloc\.com\/thread/,
-  /hostloc\.com\/forum\.php\?mod=post/,
-  /hostloc\.com\/forum\.php\?mod=viewthread/,
+  /hostloc\.com\/thread\-/,
   ] , function(){
 
     nw.addScript(`
