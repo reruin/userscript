@@ -972,6 +972,7 @@ nw.c({
             }else if(resp.indexOf('<title>Loading')>=0){
               setTimeout(process, 60*1000);
             }else{
+              console.log('error:'+ resp.indexOf('message error') )
               setTimeout(process, 500);
             }
 

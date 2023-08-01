@@ -332,6 +332,7 @@ nw.c([
       var API = 'https://api.reruin.net/hostloc/posts'
       var $ = jQuery
 
+
       var tpl = \`<div id="post_10861020">
   <table id="pid10861020" class="plhin" summary="pid10861020" cellspacing="0" cellpadding="0">
     <tbody>
@@ -393,6 +394,12 @@ nw.c([
         e.preventDefault()
       })
 
+      function bbcodeParse(data){
+        return data
+          .replace(/\[url=(.+?)\]/g,'<a href="$1">')
+          .replace(/\[\/url\]/g,'<\/a>')
+          .replace(/\[img\](.+?)\[\/img\]/g,'<img src="$1" />')
+      }
       function parse (str, data) {
         data = data || {}
         return str.replace(/\{([a-z_0-9]+)\}/ig, function(str, key) {
@@ -422,6 +429,9 @@ nw.c([
             label = Math.ceil(rel / 24 / 60) + '天前'
           }
           t.time = label
+        }
+        if(t.content){
+          t.content = bbcodeParse(t.content);
         }
         return t
       }

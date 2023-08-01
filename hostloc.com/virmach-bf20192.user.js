@@ -1,18 +1,18 @@
 // ==UserScript==
-// @name         virmach-bf2018
+// @name         virmach-bf2019
 // @namespace    https://github.com/reruin
 // @version      0.1
 // @license      MIT
-// @description  virmach bf2018
+// @description  virmach bf2019
 // @author       reruin@gmail.com
-// @grant        GM_openInTab
+// @grant        none
 // @include      https://virmach.com/*
 // @include      https://billing.virmach.com/*
 // @connect      *
 // @run-at       document-start
 // ==/UserScript==
 
-//https://billing.virmach.com/cart.php?a=add&pid=161&billingcycle=annually recaptcha_widget
+//https://billing.virmach.com/cart.php?a=add&pid=175&billingcycle=annually
 
 (function(root) {
     var nw = root.nw = {};
@@ -161,7 +161,9 @@
     }
 
     function open_direct(url){
-      GM_openInTab(url , true);
+      var link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+      link.href = url;
+      link.click();
     }
     nw.c = create
     nw.init = init
@@ -182,7 +184,7 @@ nw.c({
     console.log('keep alive')
     setTimeout(()=>{
       location.reload()
-    },3 * 60 * 1000)
+    },60 * 1000)
   }
 })
 
@@ -207,7 +209,7 @@ nw.c({
           console.log('no');
         }
       }
-
+      
     }, 100);
   }
 });
@@ -221,13 +223,13 @@ nw.c({
 });
 
 nw.c({
-  rule: /billing\.virmach\.com\/cart\.php\?a=add&pid=161/,
+  rule: /billing\.virmach\.com\/cart\.php\?a=add&pid=175/,
   pre: function() {},
   post: function() {
 
     setTimeout(function() {
       if(
-        $('#main-body').length &&
+        $('#main-body').length && 
         $("#main-body .alert-heading").html().includes('Out of Stock')
       ){
         location.href = 'https://virmach.com/black-friday-cyber-monday'
@@ -278,11 +280,9 @@ nw.c({
               // bandwidth
               else if( i.endsWith('T') ){
                 rule['bandwidth'] = wrapArray(i.replace('T','').split('-').map( i => parseFloat(i) ))
-              }else if( i.endsWith('IP') ){
-                rule['ip'] = wrapArray(i.replace('IP','').split('-').map( i => parseInt(i) ))
               }
               // bandwidth
-              else if( ['CA','TX','GA','DE','IL','WA','NJ','NY','AZ','AZ1','NL'].includes(i) ){
+              else if( ['CA','TX','GA','DE','IL','WA','NJ','NY','AZ','NL'].includes(i) ){
                 if(!rule['location']) rule['location'] = []
                 rule['location'].push(i)
               }
@@ -293,10 +293,6 @@ nw.c({
               }
               else if( ['WIN','WINDOWS','W'].includes(i)){
                 rule['os'] = 'windows'
-              }
-              // rate
-              else if( i.endsWith('R') ){
-                rule['rate'] = wrapArray(i.replace('R','').split('-').map( i => parseFloat(i) ))
               }
               // price
               else if( /([\d\.]+\-[\d\.]+|[\d\.]+)/.test(i) ){
@@ -350,7 +346,7 @@ nw.c({
               return false
             }
           }
-        }
+        } 
 
         return true
       }
@@ -362,10 +358,10 @@ nw.c({
                 body: msg,
                 icon: 'https://cdn3.virmach.com/images/logo.png'
             });
-
+            
             notification.onclick = function() {
               window.open('https://virmach.com/black-friday-cyber-monday')
-              notification.close();
+              notification.close();    
             };
         }else {
             Notification.requestPermission();
@@ -376,14 +372,13 @@ nw.c({
         var retry = 0;
         var current;
         var storage = window.localStorage;
-        var flag = true;
-        var session = $('<iframe src="https://billing.virmach.com/clientarea.php" style="display:none;" />');
-        var orderUrl = 'https://billing.virmach.com/aff.php?aff=5935&a=add&pid=161&billingcycle=annually'
+        // var session = $('<iframe src="https://billing.virmach.com/clientarea.php" style="display:none;" />');
+        var orderUrl = 'https://billing.virmach.com/aff.php?aff=5935&a=add&pid=175&billingcycle=annually'
         function init(){
           current = $(`<a class="btn large greensea flat">开始</a>`)
           let el_btn_setting = $(`<a class="btn large greensea flat" id="j_setting">设置</a>`)
           let el = $('<div id="j_box" class="setting-box"><div class="hd">设置</div><div class="item"><span>价格策略</span><textarea type="text" id="j_rule" value="" placeholder="邮箱">'+
-              `# 参数：虚拟化/cpu数量/内存/硬盘/地域/价格/溢价率\r# 例如：kvm，价格20以内，核心2~4，内存>=3000M，硬盘至少20G，流量至少1T,仅限CA\r# KVM/0-20/2-4C/3000M/20G/1T/CA\r4R/0-10/1000M/10G/1T\r0-2\r1.6R/0-5/100G/0.5T\r1.8R/0-7/KVM/1T/CA/AZ/AZ1/10G`
+              `# 参数：虚拟化/cpu数量/内存/硬盘/地域/价格\r# 例如：kvm，价格20以内，核心2~4，内存>=3000M，硬盘至少20G，流量至少1T,仅限CA\r# KVM/0-20/2-4C/3000M/20G/1T/CA\r0-2\r0-6/100G/1T\r0-8/KVM/1000M/15G/SJ\r0-10/KVM/3C/4000M/20G/0.5T\r0-20/KVM/4C/6000M/20G/1T/CA\r0-30/KVM/6C/8000M/25G/1T/CA\r0-40/KVM/8C/16000M/25G/5T/CA\r0-6/KVM/200M/SJ`
             +'</textarea></div><div class="item center"><button id="j_setting_save" class="btn large greensea flat">确定</button></div></div>')
 
           $('.entry-content').prepend(el_btn_setting);
@@ -392,9 +387,7 @@ nw.c({
           el_btn_setting.on('click' , () => {
 
           })
-          current.on('click',function(){
-            flag = !flag
-          })
+
           $('body').on('click' , '#j_setting',() => {
             $('#j_box').fadeIn()
           })
@@ -405,12 +398,12 @@ nw.c({
             $('#j_box').fadeOut()
           })
 
-          $('body').append(session);
+          // $('body').append(session);
           $('body').append(el);
 
           setInterval(function(){
             console.log('keep alive')
-            session.attr('src', session.attr('src'));
+            // session.attr('src', session.attr('src'));
           } , 60 * 1000);
 
           rules = createRules($('#j_rule').val())
@@ -419,95 +412,76 @@ nw.c({
         }
 
         function isGoodPrice(d){
+          let win = d.windows
+          let price = parseFloat(d.price.replace(/[^\d\.]/g,''))
+          let virt = d.virt.toUpperCase()
 
-          let dom = $(d)
-          let raw = $('body')
-          let available = dom.find('.pricetable').length > 0
-          if( available ){
-            let win = dom.find('.price-content li').length == 8
-            let points = win ? [0,2,3,4,5,6,7] : [0,1,2,3,4,5,6]
-            let price = parseFloat(dom.find('.price-font').html().replace(/[^\d\.]/g,''))
-            let virt = dom.find('.price-content li:eq('+points[0]+') strong').html()
-            let ram = parseInt(dom.find('.price-content li:eq('+points[1]+') strong').html())
-            let cpu = parseInt(dom.find('.price-content li:eq('+points[2]+') strong').html())
-            let disk = parseInt(dom.find('.price-content li:eq('+points[3]+') strong').html())
-            let bandwidth = parseInt(dom.find('.price-content li:eq('+points[4]+') strong').html())
-            let ip = parseInt(dom.find('.price-content li:eq('+points[6]+') strong').html())
+          let ram = d.ram
+          let cpu = d.cpu
+          let disk = d.hdd
+          let bandwidth = d.bw
+          let location = d.location.split(',')[1]
+          let area = d.location.split(',')[0]
+          let areaMap = {'Los Angeles':'LA','San Jose':'SJ','Seattle':'SEA','Phoenix':'PHX','Dallas':'DAL','Buffalo':'BUF'}
+          area = areaMap[area]
+          bandwidth = Math.round(bandwidth / 10) / 100
 
-            let location = dom.find('.price-content li:eq('+points[5]+') strong').html().replace(/\s/g,'').split(',')[1]
-            let area = dom.find('.price-content li:eq('+points[5]+') strong').html().replace(/\s/g,'').split(',')[0]
-            let areaMap = {'Los Angeles':'LA','San Jose':'SJ','Seattle':'SEA','Phoenix':'PHX','Dallas':'DAL','Buffalo':'BUF'}
-            area = areaMap[area]
-            bandwidth = Math.round(bandwidth / 10) / 100
+          let mprice = cpu * 2.5 + Math.round(ram * 10 / 128) * 0.5 / 10 + (disk / 10) * 2 + bandwidth * 1
 
-            $('.pricing-inner').html( dom.find('.pricing-inner').html() )
+          if(location == 'CA') mprice *= 1
+          else if(location == 'AZ' || location == 'WA') mprice *= 0.9
+          else if(location == 'TX') mprice *= 0.8
+          else mprice *= 0.7
 
-            let mprice = cpu * 2.5 + Math.round(ram * 10 / 128) * 0.5 / 10 + (disk / 10) * 2 + bandwidth * 1 + (ip-1)*2.5
 
-            if(location == 'CA') mprice *= 1
-            else if(location == 'AZ'|| location == 'AZ1' || location == 'WA') mprice *= 0.9
-            else if(location == 'TX') mprice *= 0.8
-            else mprice *= 0.7
+          if(virt == 'OPENVZ') mprice *= 0.6
+          if(win) mprice *= 1.2
 
-            if(virt == 'OpenVZ') mprice *= 0.6
-            if(win) mprice *= 1.2
+          mprice = Math.round(mprice*100)/100
 
-            mprice = Math.round(mprice*100)/100;
-
-            let rate =  Math.round(100 * mprice / price) / 100;
-
-            let os = win ? 'windows' : undefined
-            let msg = (`$${price}: ${virt}/$${price}/${cpu}C/${ram/1024}G/${disk}GB SSD/${bandwidth}TB/${location}/${ Math.round(rate * 100)}%`)
-
-            let res = checkRules({virt ,ip, price , ram , cpu , disk , bandwidth , location , area , os , rate})
-            $('.price-font').after(`<p style="margin-top:1em;margin-bottom:0;font-size:12px;font-family:'microsoft yahei'">${rate}:${res}(${retry}) 估值：$ ${mprice} / yr （溢价 ${Math.round(100*(mprice-price)/price)}%）</p>`)
-
-            console.log(res+':'+msg)
-
-            if( res ){
-              notify(msg)
-            }
-            return res
+          let p = `估值：$ ${mprice} / yr （溢价 ${Math.round(100*(mprice-price)/price)}%）`
+          if($('#j-price').length > 0){
+            $('#j-price').html(p)
           }else{
-            return false
+            $('.price-font').after(`<p id="j-price" style="margin-top:1em;margin-bottom:0;font-size:12px;font-family:'microsoft yahei'">${p}</p>`)
           }
+          
+          let os = win ? 'windows' : undefined
+          let msg = (`$${price}: ${virt}/$${price}/${cpu}C/${ram/1024}G/${disk}GB SSD/${bandwidth}TB/${location}`)
+
+          let res = checkRules({virt , price , ram , cpu , disk , bandwidth , location , area , os})
+          console.log(res+':'+msg)
+
+          if( res ){
+            notify(msg)
+          }
+          return res
+          
         }
 
         function process(){
-          current.prop('disabled',false).html('运行中('+ retry++ +')');
-          if(!flag){
-             current.prop('disabled',false).html('暂停');
-             setTimeout(process, 1200);
-          }
-          $.get('?t='+Date.now()).then(function(resp){
-            if(
-              resp.includes('Out of Stock') ||
-              resp.includes('SOLD OUT')
-            ){
-              console.log('SOLD OUT')
-              setTimeout(process, 1200);
-            }else{
-              if(isGoodPrice(resp)){
-                location.href = orderUrl;
-              }else{
-                setTimeout(process, 1200);
-              }
-            }
+          current.prop('disabled',true).html('运行中('+ retry++ +')');
 
+          //https://billing.virmach.com/modules/addons/blackfriday/new_plan.json
+          $.get('https://billing.virmach.com/modules/addons/blackfriday/new_plan.json?t'+Date.now()).then(function(resp){
+            if(resp && isGoodPrice(resp) && !resp.ended){
+              location.href = orderUrl;
+            }else{
+              setTimeout(process, 1200);
+            }
+            
           },function(){
-              setTimeout(function(){
-                  location.reload();
-              }, 10*1000);
+            setTimeout(process, 10*1000);
           });
         }
-
+        
         init();
 
       }(jQuery));
-
+      
       window.dig = dig;
     }
-
+    
     nw.addScript(';(' + script + '());', 'body');
     nw.addStyle('.setting-box{font-size:12px;z-index:99999;display:none;position:fixed;top:50%;left:50%;width:70%;padding:0 12px;transform: translate(-50%,-50%);background:#fff;box-shadow:0 0 3px rgba(0,0,0,.3);}.setting-box .hd{padding:12px;font-size:15px;color:#333;border-bottom:1px solid #eee;}.setting-box .item{ margin:12px; display:flex;align-items:center;}.setting-box .item span{ flex:0 0 80px; font-size:12px;}.setting-box .item textarea{height:300px;padding:8px;flex:1 1 auto;border:1px solid #bbb;}.setting-box .item.center{justify-content:center;}')
 
@@ -525,8 +499,8 @@ nw.c({
       }else{
         location.href = '/cart.php?a=checkout';
       }
-    },60)
-
+    },100)
+    
   }
 });
 
@@ -535,7 +509,6 @@ nw.c({
   pre: function() {},
   post: function() {
     var payType = 'paypalbilling'
-    fetch('https://tinyapi.sinaapp.com/proxy/ftqq.php?key=SCU26628T3d98d3a0c6503d95ebaf49054f7179b95afe5c34322b8&text=VIRMACH下单成功')
 
     setTimeout(function(){
       // $('#checkout').click();
@@ -545,25 +518,14 @@ nw.c({
       $("input[name='paymentmethod'][value='"+payType+"']").prop("checked",'true').change();
       // $("input[name='paymentmethod'][value='newalipay']").prop("checked",'true').change();
       $("#accepttos").prop("checked", true).change();
-      $('input[type="submit"]').val('Please Wait...').data('modal', true).click();
+      $('input[type="submit"]').val('Please Wait...').click();
 
-      //nw.o( 'https://virmach.com/black-friday-cyber-monday');
       // automatically removed from the cart
       setTimeout(function(){
-        nw.o( 'https://virmach.com/black-friday-cyber-monday');
-       //location.href = 'https://virmach.com/black-friday-cyber-monday';
+        location.href = 'https://virmach.com/black-friday-cyber-monday';
       },60*1000);
     },100);
   }
 });
-
-nw.c({
-  rule: /billing\.virmach\.com\/cart\.php\?a=complete/,
-  pre: function() {},
-  post: function() {
-    fetch('https://tinyapi.sinaapp.com/proxy/ftqq.php?key=SCU26628T3d98d3a0c6503d95ebaf49054f7179b95afe5c34322b8&text=VIRMACH验证码')
-  }
-});
-
 
 //==================================
